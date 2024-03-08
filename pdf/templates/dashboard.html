@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+
+
+
+<style>
+  .limit-lines {
+    height: 3em;
+    font-size: 13px;
+    padding: 0%;
+    margin: 0%;
+    /* Adjust the value based on the desired fixed height */
+    overflow: auto;
+    text-overflow: ellipsis;
+  }
+
+  .limit-lines::-webkit-scrollbar {
+    width: 0 !important;
+    /* Hide scrollbar for WebKit browsers */
+  }
+
+  .limit-name {
+    max-height: 1em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+</style>
+
+
+<div class="container-fluid">
+  <div class="row mt-2">
+
+    {% for data in publication_data %}
+    <div class="col-md-4 my-4">
+      <div class="p-0" style="border-radius: 10px;">
+        <!-- <a href="{{ data.pdf.file.url }}" target="view"> -->
+          <a href="/view/{{data.pdf.pk}}" >
+          <img src="{{ data.pdf.cover_image.url }}" class="card-img-top" alt="PDF Image"
+            style="height: 200px; width: 100%; object-fit: cover; border: 1px solid rgb(59, 58, 58);border-radius: 10px;">
+          <div class="">
+            <p class="limit-lines text-dark p-0"><b>| {{ data.pdf.title }} |</b></p>
+          </div>
+        </a>
+        <a href="/view_profile/{{ data.publication_user.pk }}">
+        <div class="row" >
+        
+          <!-- profile image temparary hidden -->
+          <div class="col-3 ">
+            {% if data.publication_user.profile and data.publication_user.profile.url %}
+
+            <img src="{{ data.publication_user.profile.url }}" class="p-0 overflow-hidden" alt=""
+            style="width: 50px;height: 50px; object-fit: cover; border-radius: 100%; border: 0.5px solid black;">
+            {% else %}
+            <img src="{% static '/images/profile.jpeg' %}" class="p-0" alt=""
+            style="width: 50%;  object-fit: cover; border-radius: 100%; border: 0.5px solid black;">
+            {% endif %}
+          </div>
+          <div class="col-9 " style="font-size: 11px;">
+            <h6 class="card-title limit-name text-danger" style="font-size: 13px;">{{ data.publication_user.Publication_Name }}</h6>
+            {{ data.pdf.date }}
+
+          </div>
+          
+        </div>
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+
+
+  <!-- Add more cards or content here -->
+</div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-1"></div>
+  <div class="col-2"> {% if pdfs_page.has_previous %}
+    <form method="get" action="/" >
+      <input type="hidden" name="page" value="{{ pdfs_page.previous_page_number }}">
+      <button type="submit" id="submit" class="btn btn-primary mb-3">
+        <<< Previous</button>
+      </form>
+      {% endif %}
+    </div>
+    <div class="col-5"></div>
+    <div class="col-2"> {% if pdfs_page.has_next %}
+      <form method="get" action="/">
+        <input type="hidden" name="page" value="{{ pdfs_page.next_page_number }}">
+        <button type="submit" id="submit" class="btn btn-primary mb-3">Load More >>></button>
+      </form>
+      <div class="col-2"></div>
+    {% endif %}
+  </div>
+
+
+
+
+</div>
+
+{% endblock %}

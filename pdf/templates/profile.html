@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .container-card {
+        max-width: 500px;
+        margin: auto;
+    }
+
+    .card-header {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .btn-google {
+        background-color: #4285f4;
+        color: #fff;
+    }
+
+    .btn-google:hover {
+        background-color: #357ae8;
+    }
+
+    .btn-login {
+        background-color: #28a745;
+        color: #fff;
+    }
+
+    .btn-login:hover {
+        background-color: #218838;
+    }
+
+    .btn-profile {
+        background-color: #6c757d;
+        color: #fff;
+    }
+
+    .btn-profile:hover {
+        background-color: #5a6268;
+    }
+</style>
+
+
+<style>
+    .limit-lines {
+        height: 3em;
+        /* Adjust the value based on the desired fixed height */
+        overflow: auto;
+        text-overflow: ellipsis;
+    }
+
+    .limit-lines::-webkit-scrollbar {
+        width: 0 !important;
+        /* Hide scrollbar for WebKit browsers */
+    }
+
+    .limit-name {
+        max-height: 1em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+
+
+{% if pub_name %}
+<div class="container-fluid">
+    <form id="uploadpublication" method="post" enctype="multipart/form-data" action="/uploadpublication/"
+        class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="profile-picture text-center  my-3 mt-5">
+            {% if img %}
+            <img src="/media/{{img}}" alt="Profile Picture" class="img-fluid overflow-hidden" onclick="selectimg()"
+                style="border-radius: 100%;border: 5px solid green; width: 150px; height: 150px;" onclick="selectimg()">
+            {% else %}
+            <img src="{% static '/images/profile.jpeg' %}" alt="Profile Picture" class="img-fluid"
+                style="border-radius: 100%;border: 5px solid green; width: 25vw;" onclick="selectimg()">
+            {% endif %}
+            <script>
+                function selectimg() {
+                    document.getElementById("xyz").click();
+                }
+
+            </script>
+            <input type="file" class="form-control" id="xyz" name="proimg" accept="image/*" style="display: none;">
+        </div>
+        <div class="user-info text-center">
+            <input type="text" name="pubnameedit" value="{{pub_name}}" id="descedit" class="form-control text-center"
+                placeholder="Publication Name">
+            <textarea name="descedit" id="" cols="30" rows="5" class="form-control text-center"
+                placeholder="Enter Description">{{desc}}</textarea>
+            <div class="container text-center mt-2">
+                <input type="submit" value="Update" class="btn btn-primary">
+            </div>
+    </form>
+</div>
+
+<h5 class="text-dark my-3"><u>Posts</u></h5>
+<div class="container-fluid w-100" style="border: 1px solid rgb(78, 76, 76); height: 60vh; overflow-y: scroll;">
+    <div class="row">
+
+        {% if publication_data %}
+        {% else %}
+        <p>Please Upload Something...</p>
+        {% endif %}
+        {% for data in publication_data %}
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <a href="/view/{{data.pdf.pk}}">
+                    <img src="{{ data.pdf.cover_image.url }}" class="card-img-top" alt="PDF Image"
+                        style="height: 150px; width: 100%; object-fit: cover; border: 1px solid gray;">
+                    <div class="card-body">
+                        <p class="limit-lines text-dark"><b>{{ data.pdf.title }}</b></p>
+                </a>
+                <a href="#" onclick="confirmDelete('{{ data.pdf.pk }}')">
+                    <button class="btn btn-outline-danger container-fluid">Delete</button>
+                </a>
+
+                <script>
+                    function confirmDelete(pk) {
+                        var confirmation = confirm("Are you sure you want to delete?");
+
+                        if (confirmation) {
+                            // If user confirms, trigger the delete URL
+                            window.location.href = "/delete/" + pk;
+                        } else {
+                            // If user cancels, do nothing
+                            // You can add additional handling here if needed
+                        }
+                    }
+                </script>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+
+
+
+</div>
+</div>
+</div>
+</div>
+</div>
+
+{% else %}
+
+
+<div class="container p-3 my-5">
+    <div class="container">
+        <div class="card">
+            <div class="card-header text-center">
+                <h4 class="mb-0">Log In</h4>
+            </div>
+            <div class="card-body">
+
+
+
+                <!-- Your custom login form goes here -->
+                <form action="/profile/" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="Email" class="form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-login btn-block">Login</button>
+                </form>
+                <p class="text-center my-3">OR</p>
+                <a href="/sign_up/" class="btn btn-profile btn-block mt-3">
+                    Sign up
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Bootstrap JS (Include the Bootstrap JS file from a CDN or download and host it locally) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+{% endblock %}

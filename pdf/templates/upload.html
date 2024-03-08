@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    *{
+        margin: 0;
+        
+        padding: 0;
+    }
+
+    /* Custom CSS for styling */
+.card-body {
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.btn-outline-primary {
+    margin-right: 10px;
+}
+
+.invalid-feedback {
+    display: none;
+}
+
+.was-validated .form-control:invalid {
+    border-color: #dc3545;
+}
+
+.was-validated .form-control:invalid ~ .invalid-feedback {
+    display: block;
+}
+
+</style>
+<div class="mt-5" style="background-color: rgb(228, 227, 226);">
+
+    <div class="">
+        <div class="row">
+            <div class="col-12">
+    
+                <h5 class="text-danger text-center">Upload Content</h5>
+    
+                <div class="" style="border: 1px solid green; border-radius: 5px;">
+                    <div class="card-body" id="step1">
+    
+                        <form id="uploadForm" method="post" enctype="multipart/form-data" action="/upload/" class="needs-validation" novalidate>
+                            {% csrf_token %}
+    
+                            <!-- File Field for PDF -->
+                            <div class="form-group">
+                                <label for="id_video" class="text-danger">Content File:*</label>
+                                <input type="file" class="form-control" id="id_video" name="file" accept="pdf/*" required>
+                                <div class="invalid-feedback">Please choose a PDF file.</div>
+                            </div>
+    
+                            <div class="text-center">
+                                <button type="button" class="btn btn-outline-primary" id="nextStep1">Next</button>
+                            </div>
+    
+                    </div>
+    
+                    <div class="card-body" id="step2" style="display: none;">
+    
+    
+                            <!-- File Field for Cover Image -->
+                            <div class="form-group">
+                                <label for="id_thumbnail" class="text-primary">Cover Image:*</label>
+                                <input type="file" class="form-control" id="id_thumbnail" name="cover_image" accept="image/*" required>
+                                <div class="invalid-feedback">Please choose a thumbnail image.</div>
+                            </div>
+    
+                            <div class="text-center">
+                                <button type="button" class="btn btn-outline-primary" id="prevStep2">Previous</button>
+                                <button type="button" class="btn btn-outline-primary" id="nextStep2">Next</button>
+                            </div>
+                        
+    
+                    </div>
+    
+                    <!-- Add more steps as needed -->
+    
+                    <div class="card-body" id="step3" style="display: none;">
+    
+                  
+                            <!-- Title Field -->
+                            <div class="form-group mt-3">
+                                <label for="id_title"><b>Title:*</b></label>
+                                <input type="text" class="form-control" id="id_title" name="title" maxlength="100" required>
+                                <div class="invalid-feedback">Please enter a title.</div>
+                            </div>
+    
+                            <div class="text-center">
+                                <button type="button" class="btn btn-outline-primary" id="prevStep3">Previous</button>
+                                <button type="button" class="btn btn-outline-primary" id="nextStep3">Next</button>
+                            </div>
+                       
+    
+                    </div>
+    
+                    <div class="card-body" id="step4" style="display: none;">
+    
+                            <!-- Description Field -->
+                            <div class="form-group">
+                                <label for="id_description"><b>Description:</b></label>
+                                <textarea class="form-control" id="id_description" name="description" rows="6" required></textarea>
+                                <div class="invalid-feedback">Please enter a description.</div>
+                            </div>
+    
+                            <div class="text-center">
+                                <button type="button" class="btn btn-outline-primary" id="prevStep4">Previous</button>
+                                <button type="submit" class="btn btn-outline-primary">Submit</button>
+                            </div>
+                        </form>
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function() {
+                                const form = document.getElementById("uploadForm");
+                        
+                                form.addEventListener("submit", function(event) {
+                                    // Prevent form submission
+                                    event.preventDefault();
+                        
+                                    // Check if input fields are filled
+                                    const title = document.getElementById("id_title").value.trim();
+                                    const description = document.getElementById("id_description").value.trim();
+                        
+                                    if (title === "" || description === "") {
+                                        // If any field is empty, show error message
+                                        alert("Please fill in all fields.");
+                                    } else {
+                                        // If all fields are filled, submit the form
+                                        form.submit();
+                                    }
+                                });
+                            });
+                        </script>
+                        
+                    </div>
+    
+                </div>
+    
+            </div>
+        </div>
+    </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var step1 = document.getElementById("step1");
+        var step2 = document.getElementById("step2");
+        var step3 = document.getElementById("step3");
+        var step4 = document.getElementById("step4");
+
+        var nextStep1Btn = document.getElementById("nextStep1");
+        var nextStep2Btn = document.getElementById("nextStep2");
+        var nextStep3Btn = document.getElementById("nextStep3");
+
+        var prevStep2Btn = document.getElementById("prevStep2");
+        var prevStep3Btn = document.getElementById("prevStep3");
+        var prevStep4Btn = document.getElementById("prevStep4");
+
+        var uploadForm = document.getElementById("uploadForm");
+
+        nextStep1Btn.addEventListener("click", function () {
+            step1.style.display = "none";
+            step2.style.display = "block";
+        });
+
+        nextStep2Btn.addEventListener("click", function () {
+            step2.style.display = "none";
+            step3.style.display = "block";
+        });
+
+        nextStep3Btn.addEventListener("click", function () {
+            step3.style.display = "none";
+            step4.style.display = "block";
+        });
+
+        prevStep2Btn.addEventListener("click", function () {
+            step2.style.display = "none";
+            step1.style.display = "block";
+        });
+
+        prevStep3Btn.addEventListener("click", function () {
+            step3.style.display = "none";
+            step2.style.display = "block";
+        });
+
+        prevStep4Btn.addEventListener("click", function () {
+            step4.style.display = "none";
+            step3.style.display = "block";
+        });
+
+        uploadForm.addEventListener("submit", function () {
+            // Perform form submission or additional validation if needed
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var step1 = document.getElementById("step1");
+        var step2 = document.getElementById("step2");
+        var step3 = document.getElementById("step3");
+        var step4 = document.getElementById("step4");
+
+        var nextStep1Btn = document.getElementById("nextStep1");
+        var nextStep2Btn = document.getElementById("nextStep2");
+        var nextStep3Btn = document.getElementById("nextStep3");
+
+        var prevStep2Btn = document.getElementById("prevStep2");
+        var prevStep3Btn = document.getElementById("prevStep3");
+        var prevStep4Btn = document.getElementById("prevStep4");
+
+        var uploadForm = document.getElementById("uploadForm");
+
+        nextStep1Btn.addEventListener("click", function () {
+            step1.style.display = "none";
+            step2.style.display = "block";
+        });
+
+        nextStep2Btn.addEventListener("click", function () {
+            step2.style.display = "none";
+            step3.style.display = "block";
+        });
+
+        nextStep3Btn.addEventListener("click", function () {
+            step3.style.display = "none";
+            step4.style.display = "block";
+        });
+
+        prevStep2Btn.addEventListener("click", function () {
+            step2.style.display = "none";
+            step1.style.display = "block";
+        });
+
+        prevStep3Btn.addEventListener("click", function () {
+            step3.style.display = "none";
+            step2.style.display = "block";
+        });
+
+        prevStep4Btn.addEventListener("click", function () {
+            step4.style.display = "none";
+            step3.style.display = "block";
+        });
+
+        uploadForm.addEventListener("submit", function () {
+            // Perform form submission or additional validation if needed
+        });
+    });
+</script>
+
+    <!-- Include Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    
+
+</div>
+{% endblock %}

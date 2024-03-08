@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load base64_filter %}
+<style>
+  #fullscreen-content {
+    height: 70vh;
+    overflow-y: scroll;
+    border: 2px solid white;
+  }
+</style>
+
+<script>
+  function toggleFullscreen() {
+    var content = document.getElementById('fullscreen-content');
+    if (!document.fullscreenElement) {
+      content.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  }
+</script>
+<style>
+  #fullscreen-container {
+    display: none;
+    /* Initially hide the div */
+    /* Add your styling for the fullscreen container here */
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var fullscreenContainer = document.getElementById('fullscreen-container');
+    var pdf = document.getElementById('pdf');
+    var skipAddBtn = document.getElementById('skip_add_btn');
+    var countdownDisplay = document.getElementById('countdown-display');
+
+    // Show the div
+    fullscreenContainer.style.display = 'block';
+    pdf.style.display = 'none';
+
+    var countdown = 7; // Initial countdown time in seconds
+
+    // Update countdown every second
+    var countdownInterval = setInterval(function () {
+      countdown--;
+
+      if (countdown <= 0) {
+        // Show the "Skip Ad" button and hide the countdown display
+        skipAddBtn.style.display = 'block';
+        countdownDisplay.style.display = 'none';
+        clearInterval(countdownInterval);
+      } else {
+        // Update the countdown display
+        countdownDisplay.innerHTML = 'Skip in ' + countdown + 's';
+      }
+    }, 1000); // 1000 milliseconds = 1 second
+  });
+
+  function skip_add() {
+    var fullscreenContainer = document.getElementById('fullscreen-container');
+    var pdf = document.getElementById('pdf');
+    fullscreenContainer.style.display = 'none';
+    pdf.style.display = 'block';
+  }
+</script>
+<div class="row">
+  <div class="col-md-8">
+
+
+    <div class="" id="fullscreen-content"
+      style="height: 60vh; overflow-y: scroll; border: 2px solid rgb(19, 19, 19); border-radius: 10px;">
+
+
+      <!-- this is advertisement container -->
+      <div class="text-center p-0" id="fullscreen-container" style="height: 60vh; overflow-y: hidden;overflow-x: hidden;">
+        <img id="fullscreen-image" src="{{ random_record.banner.url }}" alt="" class="overflow-hidden" style="height: 90%; width: 90%;  object-fit: cover;">
+        <div id="countdown-display" class="btn btn-dark text-white sticky-top m-2 w-10 position-absolute bottom-0 end-0"
+          style="display: block;border-radius: 90%;"></div>
+        <div id="skip_add_btn" class="btn btn-dark text-white sticky-top m-2 w-10 position-absolute bottom-0 end-0"
+          onclick="skip_add()" style="display: none; border-radius: 90%;">Skip Ad</div>
+      </div>
+
+
+
+      <!-- this is proper pdf -->
+      <div class="container-fluid p-0" id="pdf">
+        <div id="fullscreen-button" class="btn btn-dark sticky-top m-2" style="border: 2px solid red;"
+          onclick="toggleFullscreen()">Fullscreen</div>
+        {% for image in image_list %}
+        <img src="data:image/jpeg;base64,{{ image.getvalue|base64 }}" alt="Page {{ forloop.counter }}"
+          style="height: 100%; width: 100%; object-fit: cover; " class="mb-2">
+        {% endfor %}
+      </div>
+
+    </div>
+    <div class="container-fluid mb-5">
+
+      <h5 class="text-danger">{{pdf_title}}</h5>
+      <p>{{date}}</p>
+      <details >
+       
+          <summary>
+            {{ desc|slice:":100" }}...
+          </summary>
+          <span>
+            {{ desc }}
+          </span>
+      
+
+      </details>
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="col-md-4 justify-content-center" style="overflow-y: scroll; height: 80vh;">
+
+    <style>
+      .limit-lines {
+        height: 3em;
+        /* Adjust the value based on the desired fixed height */
+        overflow: auto;
+        text-overflow: ellipsis;
+      }
+
+      .limit-lines::-webkit-scrollbar {
+        width: 0 !important;
+        /* Hide scrollbar for WebKit browsers */
+      }
+
+      .limit-name {
+        max-height: 1em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    </style>
+
+
+    <div class="row my-3">
+
+      {% for data in publication_data %}
+      <div class="col-md-10 mb-4">
+        <div class="card">
+          <!-- <a href="{{ data.pdf.file.url }}" target="view"> -->
+          <a href="/view/{{data.pdf.pk}}">
+            <img src="{{ data.pdf.cover_image.url }}" class="card-img-top" alt="PDF Image"
+              style="height: 150px; width: 100%; object-fit: cover; border: 1px solid gray;">
+            <div class="card-body">
+              <p class="limit-lines text-dark"><b>{{ data.pdf.title }}</b></p>
+          </a>
+          <a href="/view_profile/{{ data.publication_user.pk }}">
+          <div class="row">
+            <div class="col-3 ">
+              
+              {% if data.publication_user.profile and data.publication_user.profile.url %}
+
+              <img src="{{ data.publication_user.profile.url }}" class="overflow-hidden" alt=""
+                style="width: 100%; height: 100%; border-radius: 100%; border: 0.5px solid black;">
+              {% else %}
+              <img src="{% static '/images/profile.jpeg' %}" class="p-0" alt=""
+                style="width: 100%; height: 100%; object-fit: cover; border-radius: 100%; border: 0.5px solid black;">
+              {% endif %}
+            </div>
+            <div class="col-9 p-0">
+              <h6 class="card-title limit-name text-danger">{{ data.publication_user.Publication_Name }}</h6>
+
+            </div>
+          </div>
+        </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+
+    <!-- Add more cards or content here -->
+
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-1"></div>
+    <div class="col-2"> {% if pdfs_page.has_previous %}
+      <form method="get" action="/view/{{pk}}">
+        <input type="hidden" name="page" value="{{ pdfs_page.previous_page_number }}">
+        <button type="submit" id="submit" class="btn btn-primary mb-3">
+          <<< Previous</button>
+      </form>
+      {% endif %}
+    </div>
+    <div class="col-5"></div>
+    <div class="col-2"> {% if pdfs_page.has_next %}
+      <form method="get" action="/">
+        <input type="hidden" name="page" value="{{ pdfs_page.next_page_number }}">
+        <button type="submit" id="submit" class="btn btn-primary mb-3">Load More >>></button>
+      </form>
+      <div class="col-2"></div>
+      {% endif %}
+    </div>
+
+
+
+
+  </div>
+</div>
+
+
+{% endblock %}

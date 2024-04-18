@@ -1,0 +1,244 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Social Media Website</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+            background-color: #000; /* Background color changed to black */
+            margin: 0;
+            padding: 0;
+            color: #fff; /* Text color changed to white */
+            position: relative;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #000; /* Navbar background color changed to black */
+            box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.1); /* Updated box-shadow */
+            padding: 0; /* Updated padding */
+            text-align: center;
+            /* position: fixed; */
+            top: 0;
+            width: 100%;
+            z-index: 999;
+        }
+
+        .custom-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .custom-logo {
+            color: #fff; /* Text color changed to white */
+            text-decoration: none;
+            /* font-size: 1.5rem; */
+            /* font-weight: bold; */
+        }
+
+     
+
+        .search-icon {
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .search-bar-container {
+            display: none;
+            padding: 10px;
+            background-color: #000; /* Navbar background color changed to black */
+        }
+
+        .search-bar {
+            width: calc(100% - 50px);
+            border: 1px solid #fff; /* Border color changed to white */
+            border-radius: 20px; /* Round the corners */
+            padding: 8px 12px;
+            font-size: 1rem;
+            outline: none;
+            color: #fff; /* Text color changed to white */
+            background-color: #333; /* Input field background color changed */
+        }
+        footer {
+            background-color: #000; /* Footer background color changed to black */
+            color: #fff; /* Text color changed to white */
+            padding: 5px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0px -2px 4px rgba(255, 255, 255, 0.1); /* Updated box-shadow */
+        }
+
+        .custom-footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .custom-footer-content img {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+        }
+
+        .custom-nav-links {
+            list-style: none;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+        }
+
+        .custom-nav-links li {
+            margin-right: 20px;
+        }
+
+        .custom-nav-links li a {
+            color: #fff; /* Text color changed to white */
+            text-decoration: none;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Media Query for Responsive Design */
+        @media (max-width: 768px) {
+            .custom-container {
+                flex-direction: column;
+                padding: 10px;
+            }
+
+            
+
+            .search-bar-container {
+                width: 100%;
+            }
+        }
+        
+        .notification-box {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: black;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    z-index: 9999;
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="custom-container">
+            <div class="row">
+                
+                <div class="custom-logo col-3">
+                    <span><b>AmrutamTechnology</b></span>
+                </div>
+                <div class="col-6"></div>
+                <!-- <div class="search-icon px-3 col-2" id="hidesearch" onclick="toggleSearch()">
+                    <i class="fas fa-search"></i>
+                </div> -->
+            </div>
+            <div class="search-bar-container" id="search-bar-container">
+                <form action="/" method="post" class="form-inline">
+                    {% csrf_token %} 
+                    <input type="text" name="submit" class="form-control mr-2 search-bar" placeholder="Search...">
+                    <button class="btn btn-sm btn-info" type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+        </div>
+    </header>
+    <script>
+        function toggleSearch() {
+            document.getElementById("hidesearch").style.display="none";
+            var searchContainer = document.getElementById("search-bar-container");
+            searchContainer.classList.toggle("show-search");
+        }
+    </script>
+    
+    <style>
+        .search-bar-container {
+            display: block;
+        }
+        .show-search {
+            display: block;
+        }
+        @media (min-width: 768px) {
+            .custom-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+    </style>
+    {% block content %}{% endblock %}
+    <div id="notification-box" class="notification-box"></div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    {% if messages %}
+    <ul class="messages" style="display: none;">
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<script>
+    // Function to show notification
+    function showNotification(message) {
+        var notificationBox = document.getElementById('notification-box');
+        notificationBox.innerHTML = message;
+        notificationBox.style.display = 'block';
+        setTimeout(function() {
+            notificationBox.style.display = 'none';
+        }, 3000); // Hide after 3 seconds (adjust as needed)
+    }
+
+    // Retrieve messages from hidden input fields and display them as notifications
+    var messageElements = document.querySelectorAll('.messages li');
+    messageElements.forEach(function(element) {
+        showNotification(element.textContent);
+    });
+</script>
+
+    <footer>
+        <div class="custom-container">
+            <ul class="custom-nav-links">
+              <!-- <li><a href="/"><i class="fas fa-home"></i></a></li> -->
+              <li><a href="/"><i class="fas fa-home"></i></a></li>
+              <li><a href="/upload/"><i class="far fa-compass"></i></a></li>
+              <li><a href="/spark/"><i class="far fa-heart"></i></a></li>
+              <li><a href="/profile/"><i class="far fa-user"></i></a></li>
+            </ul>
+        </div>
+    </footer>
+</body>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+</html>

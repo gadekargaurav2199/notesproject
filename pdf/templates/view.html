@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .post-preview-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* This will make the container take the full height of the viewport */
+    }
+
+    .spinner-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* This will make the container take the full height of the viewport */
+    }
+
+    .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-left-color: #3498db;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    canvas{
+        width: 100%;
+        padding: 0%;
+    }
+</style>
+<div class="container-fluid">
+    {% if is_pdf %}
+    <div class="container-fluid">
+        <div id="pdf-viewer" class="text-center">
+            <div class="spinner-container" id="loading-spinner">
+                <div class="spinner"></div>
+            </div>
+            <h3 class="text-danger" id="loading-message" style="display: none;">Loading...</h3>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const pdfFilePath = "/test";  // URL of the test endpoint in your Django backend
+            const pdfViewer = document.getElementById('pdf-viewer');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const loadingMessage = document.getElementById('loading-message');
+
+            // Show loading spinner
+            loadingSpinner.style.display = 'block';
+
+            // Fetch PDF file from backend
+            fetch(pdfFilePath)
+            .then(response => response.blob())
+            .then(blob => {
+                // Load PDF document
+                return pdfjsLib.getDocument(URL.createObjectURL(blob)).promise;
+            })
+            .then(pdf => {
+                // Hide loading spinner
+                loadingSpinner.style.display = 'none';
+
+                // Hide loading message
+                loadingMessage.style.display = 'none';
+
+                // Render PDF pages
+                const numPages = pdf.numPages;
+
+                for (let pageNumber = 1; pageNumber <= numPages; pageNumber++) {
+                    pdf.getPage(pageNumber).then(page => {
+                        const scale = 1.5;  // Adjust scale as needed
+                        const viewport = page.getViewport({ scale });
+
+                        // Create canvas element to display PDF page
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+
+                        // Append canvas to PDF viewer container
+                        pdfViewer.appendChild(canvas);
+
+                        // Render PDF page on canvas
+                        page.render({
+                            canvasContext: context,
+                            viewport: viewport
+                        }).catch(error => {
+                            console.error('Error rendering page:', error);
+                        });
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading PDF:', error);
+                // Hide loading spinner if there's an error
+                loadingSpinner.style.display = 'none';
+                // Show error message
+                loadingMessage.style.display = 'block';
+            });
+        });
+    </script>
+    {% else %}
+    <div class="post-preview-container text-center">
+        <div class="post-preview">
+            <img src="{{ img_path }}" alt="Unable To Load 😔" class="post-image w-75">
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal for advertisement -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content p-0">
+            <div class="modal-header btn btn-sm text-center form-control" id="closeBtn" style="color: #000; font-weight: bold;">
+
+            </div>
+            <div class="modal-body p-1">
+                <img src="{{ random_record.banner.url }}" class="img-fluid" alt="Advertisement">
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* CSS to overlay a backdrop */
+    .modal-backdrop.show {
+        opacity: 1; /* Adjust the opacity as needed */
+        background-color: #000; /* Background color for the backdrop */
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#exampleModalCenter').modal({ backdrop: 'static', keyboard: false }).modal('show');
+
+        // Show close button after 7 seconds
+        setTimeout(function() {
+            $('#closeBtn').removeClass('d-none');
+            startCountdown();
+        }, 7000);
+
+        // Countdown timer function
+        function startCountdown() {
+            var count = 7; // Adjust the countdown time here
+            var countdownInterval = setInterval(function() {
+                $('#closeBtn').text('skip in '+ count + ' s');
+                count--;
+                if (count < 0) {
+                    clearInterval(countdownInterval);
+                    $('#closeBtn').text('skip');
+                }
+            }, 1000);
+        }
+
+        // Prevent modal close when countdown button is clicked
+        $('#closeBtn').on('click', function(event) {
+            event.stopPropagation();
+            $('#exampleModalCenter').modal('hide');
+        });
+    });
+</script>
+
+{% endblock %}

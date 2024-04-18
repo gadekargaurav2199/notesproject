@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Content</title>
+<style>
+    body {
+        background-color: #121212;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    .card {
+        background-color: #333;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        max-width: 600px;
+        width: 90%;
+        margin: 50px auto;
+    }
+
+    .btn-group {
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    .btn {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .btn:hover {
+        background-color: #45a049;
+    }
+
+    .form-container {
+        padding: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        color: #ddd;
+        font-weight: bold;
+    }
+
+    .form-control {
+        background-color: #555;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        width: calc(100% - 20px);
+    }
+
+    .form-control:focus {
+        outline: none;
+        background-color: #444;
+    }
+
+    .form-control::placeholder {
+        color: #999;
+    }
+
+    .btn-upload {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-upload:hover {
+        background-color: #45a049;
+    }
+</style>
+</head>
+<body>
+<div class="card p-2">
+    <div class="btn-group">
+        <button type="button" class="btn form-control" id="postButton">Post</button>
+        <button type="button" class="btn form-control" id="sparkButton">Spark</button>
+    </div>
+    <div class="form-container" id="postForm">
+        <h2 class="text-center">Upload Content</h2>
+        <form method="post" enctype="multipart/form-data" action="/upload/">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_video">Content File:</label>
+                <input type="file" class="form-control" id="id_video" name="file" accept="pdf/*" required>
+            </div>
+            <div class="form-group">
+                <label for="id_thumbnail">Cover Image:</label>
+                <input type="file" class="form-control" id="id_thumbnail" name="cover_image" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="id_title">Title:</label>
+                <input type="text" class="form-control" id="id_title" name="title" maxlength="100" required>
+            </div>
+            <div class="form-group">
+                <label for="id_description">Description:</label>
+                <textarea class="form-control" id="id_description" name="description" rows="6" required></textarea>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn-upload">Upload</button>
+            </div>
+        </form>
+    </div>
+    <div class="form-container" id="sparkForm" style="display: none;">
+        <h2 class="text-center">Upload Content</h2>
+        <form method="post" enctype="multipart/form-data" action="/spark/">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_thumbnail">Sparks Image:</label>
+                <input type="file" class="form-control" id="id_thumbnail" name="spark_image" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="id_title">Title:</label>
+                <input type="text" class="form-control" id="id_title" name="title" maxlength="100" required>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn-upload">Upload</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById("postButton").addEventListener("click", function() {
+        document.getElementById("postForm").style.display = "block";
+        document.getElementById("sparkForm").style.display = "none";
+    });
+
+    document.getElementById("sparkButton").addEventListener("click", function() {
+        document.getElementById("postForm").style.display = "none";
+        document.getElementById("sparkForm").style.display = "block";
+    });
+</script>
+{% endblock %}
+

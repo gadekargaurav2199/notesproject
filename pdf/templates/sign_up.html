@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    body.dark-theme {
+        background-color: #212529; /* Dark background color */
+        color: #fff; /* Light text color */
+        
+    }
+    .customs-container {
+        max-width: 500px;
+        margin: auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
+        background-color: #343a40; /* Dark card background color */
+        margin-top: 80px;
+
+    }
+    .customs-card-header {
+        background-color: #007bff; /* customs header color */
+        color: #fff;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        padding: 15px;
+        text-align: center;
+    }
+    .customs-card-body {
+        padding: 20px;
+    }
+    .customs-form-control {
+        background-color: #495057; /* Dark input background color */
+        border: 1px solid #495057; /* Dark border color */
+        color: #fff; /* Light text color */
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+    .customs-form-control:focus {
+        border-color: #007bff; /* Border color on focus */
+    }
+    .customs-form-control::placeholder {
+        color: #6c757d; /* Lighter placeholder text color */
+    }
+    .customs-btn-login {
+        background-color: #007bff; /* customs button color */
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .customs-btn-login:hover {
+        background-color: #0056b3; /* Darker shade on hover */
+    }
+</style>
+</head>
+
+<div class="customs-container">
+    <div class="customs-container my-5">
+        <div class="customs-card" >
+            <div class="customs-card-header">
+                <h4 class="mb-0">Sign Up</h4>
+            </div>
+            <div class="customs-card-body" >
+                <!-- Your customs login form goes here -->
+                <form action="/sign_up/" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="text" class="form-control customs-form-control" id="Publication_name" name="Publication_name" placeholder="Publication Name / Your Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control customs-form-control" id="username" name="username" placeholder="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control customs-form-control" id="password" name="password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn customs-btn-login btn-block">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS (Include the Bootstrap JS file from a CDN or download and host it locally) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+{% endblock %}

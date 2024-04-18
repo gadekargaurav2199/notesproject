@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sparks</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        header {
+            background-color: #000; /* Navbar background color changed to black */
+            box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.1); /* Updated box-shadow */
+            padding: 0; /* Updated padding */
+            text-align: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 999;
+        }
+        .post {
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .post img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 20px;
+            border-radius: 8px;
+        }
+        .pagination-link {
+            display: block;
+            padding: 10px; /* Increase padding for easier clicking */
+            text-decoration: none;
+        }
+        .current {
+            font-weight: bold;
+        }
+    
+    </style>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+<body onclick="handleClick()" ondblclick="handleDoubleClick()">
+
+    <script>
+        function handleClick(event){
+            document.getElementById("next").click();
+            // alert("clicked");
+        }
+        function handleDoubleClick(event){
+            document.getElementById("previous").click();
+            // alert("clicked");
+        }
+    </script>
+{% if page_obj.has_other_pages %}
+<div class="row container-fluid">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="pagination-link col-3" id="previous"></a>
+    {% else %}
+    <div class="col-3" id="previous"></div>
+    {% endif %}
+    <div class="post">
+        <!-- <h5 class="text-dark">{{ page_obj.object_list.0.title }}</h5> -->
+        <div class="text-dark text-center">
+            <!-- <img src="{% static '/images/profile.jpeg' %}" alt="Profile Image" class="w-25"> -->
+              <span>{{ page_obj.object_list.0.title }}</span>
+          </div>
+        <img src="{{ page_obj.object_list.0.file.url }}" class="col-6" alt="Post Image">
+    </div>
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}" class="pagination-link col-3" id="next"></a>
+    {% else %}
+    <div class="col-3" id="next"></div>
+    {% endif %}
+</div>
+{% endif %}
+
+
+</body>
+</html>
+
+{% endblock %}

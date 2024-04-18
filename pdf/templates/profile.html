@@ -1,0 +1,330 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+
+    body {
+        background-color: #000;
+        color: #fff;
+        margin-top: 80px;
+        margin-bottom: 80px;
+    }
+    header {
+            background-color: #000; /* Navbar background color changed to black */
+            box-shadow: 0px 1px 2px rgba(255, 255, 255, 0.1); /* Updated box-shadow */
+            padding: 0; /* Updated padding */
+            text-align: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 999;
+        }
+
+    .container-card {
+        max-width: 500px;
+        margin: auto;
+    }
+
+    .card-header {
+        background-color: #222;
+        color: #fff;
+    }
+
+    .btn-google {
+        background-color: #4285f4;
+        color: #fff;
+    }
+
+    .btn-google:hover {
+        background-color: #357ae8;
+    }
+
+    .btn-login {
+        background-color: #28a745;
+        color: #fff;
+    }
+
+    .btn-login:hover {
+        background-color: #218838;
+    }
+
+    .btn-profile {
+        background-color: #6c757d;
+        color: #fff;
+    }
+
+    .btn-profile:hover {
+        background-color: #5a6268;
+    }
+
+    .limit-lines {
+        height: 3em;
+        overflow: auto;
+        text-overflow: ellipsis;
+    }
+
+    .limit-lines::-webkit-scrollbar {
+        width: 0 !important;
+    }
+
+    .limit-name {
+        max-height: 1em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Input field styling */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    .form-control {
+        background-color: #333 !important;
+        color: #fff !important;
+        border-color: #555 !important;
+    }
+
+    /* Button styling */
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+    /* Card styling */
+    .card {
+        background-color: #222;
+        color: #fff;
+    }
+
+    /* Card border */
+    .card {
+        border: 1px solid #555;
+    }
+
+    /* Card body padding */
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    /* Card title color */
+    .card-title {
+        color: #fff;
+    }
+
+    /* Post styling */
+    .post {
+        background-color: #333;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid #555;
+    }
+
+    /* Post content */
+    .post-content {
+        color: #fff;
+    }
+
+    /* Post image */
+    .post-image {
+        width: 100%;
+        height: 200px; /* Set fixed height */
+        object-fit: cover; /* Ensure image covers the entire space */
+        margin-bottom: 1rem;
+    }
+
+    /* Post footer */
+    .post-footer {
+        margin-top: 0.5rem;
+    }
+
+    /* Like, Share, Comment counts */
+    .counts {
+        color: #fff;
+    }
+</style>
+
+{% if pub_name %}
+<div class="container-fluid">
+    <form id="uploadpublication" method="post" enctype="multipart/form-data" action="/uploadpublication/"
+        class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="profile-picture text-center my-3 mt-5">
+            {% comment %} {% if img %}
+            <img src="/media/{{img}}" alt="Profile Picture" class="img-fluid overflow-hidden"
+                style="border-radius: 100%;border: 5px solid green; width: 150px; height: 150px;"
+                onclick="selectimg()">
+            {% else %} {% endcomment %}
+            <img src="{% static '/images/profile.jpeg' %}" alt="Profile Picture" class="img-fluid"
+                style="border-radius: 100%;border: 5px solid green; width: 20vw;" onclick="selectimg()">
+            {% comment %} {% endif %} {% endcomment %}
+            <script>
+                function selectimg() {
+                    document.getElementById("xyz").click();
+                }
+
+            </script>
+            <input type="file" class="form-control" id="xyz" name="proimg" accept="image/*" style="display: none;">
+        </div>
+        <div class="user-info text-center">
+            <input type="text" name="pubnameedit" value="{{pub_name}}" id="descedit" class="form-control text-center"
+                placeholder="Publication Name">
+            <textarea name="descedit" id="" cols="30" rows="5" class="form-control text-center"
+                placeholder="Enter Description">{{desc}}</textarea>
+            <div class="container text-center mt-2">
+                <input type="submit" value="Update" class="btn btn-primary">
+            </div>
+        </div>
+    </form>
+</div>
+
+<h5 class="text-dark my-3"><u>Posts</u></h5>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Loop through publication data -->
+        {% for data in publication_data %}
+        <div class="col-md-3 mb-2">
+            <div class="card">
+                <img src="{{ data.pdf.cover_image.url }}" alt="Post Image" class="post-image">
+                <div class="card-body">
+                    <!-- Post content -->
+                    <div class="post">
+                        <p class="post-content">{{ data.pdf.title }}</p>
+                    </div>
+                    <!-- Post footer with counts -->
+                    <div class="post-footer">
+                        <!-- <span class="counts">Likes: {{ data.pdf.likes }}</span>
+                        <span class="counts">Shares: {{ data.pdf.shares }}</span>
+                        <span class="counts">Comments: {{ data.pdf.comments }}</span> -->
+                        <a href="#" onclick="confirmDelete('{{ data.pdf.pk }}')">
+                            <button class="btn btn-outline-danger container-fluid">Delete</button>
+                        </a>
+        
+                        <script>
+                            function confirmDelete(pk) {
+                                var confirmation = confirm("Are you sure you want to delete?");
+        
+                                if (confirmation) {
+                                    // If user confirms, trigger the delete URL
+                                    window.location.href = "/delete/" + pk;
+                                } else {
+                                    // If user cancels, do nothing
+                                    // You can add additional handling here if needed
+                                }
+                            }
+                        </script>
+        
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+{% else %}
+<style>
+    /* Custom Bootstrap classes with "gaurav" prefix */
+    .gaurav-card {
+        max-width: 400px;
+        margin: auto;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+        background-color: #121212; /* Dark background color */
+        color: #fff; /* Light text color */
+    }
+    .gaurav-card-header {
+        background-color: #1f1f1f; /* Slightly lighter header color */
+        border-radius: 15px 15px 0 0;
+        padding: 20px;
+        text-align: center;
+        font-size: 24px;
+    }
+    .gaurav-card-body {
+        padding: 20px;
+    }
+    .gaurav-form-control {
+        background-color: #333; /* Dark input background color */
+        border: none;
+        color: #fff;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        padding: 15px;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .gaurav-form-control:focus {
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    .gaurav-btn-login {
+        background-color: #ff5722; /* Orange button color */
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        padding: 15px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: 100%;
+    }
+    .gaurav-btn-login:hover {
+        background-color: #ff6f3d; /* Darker shade on hover */
+    }
+    .gaurav-btn-profile {
+        background-color: #2196f3; /* Blue profile button color */
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        padding: 15px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: 100%;
+    }
+    .gaurav-btn-profile:hover {
+        background-color: #1e88e5; /* Darker shade on hover */
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row justify-content-center mt-5">
+        <div class="col-lg-6 col-md-8 col-sm-10">
+            <div class="card gaurav-card">
+                <div class="card-header gaurav-card-header">
+                    <h3>Welcome Back</h3>
+                </div>
+                <div class="card-body gaurav-card-body">
+                    <form action="/profile/" method="post">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <input type="email" class="form-control gaurav-form-control" id="gauravEmail" name="email" placeholder="Email" required>
+                        </div>
+                        <div class="mb-4">
+                            <input type="password" class="form-control gaurav-form-control" id="gauravPassword" name="password" placeholder="Password" required>
+                        </div>
+                        <button type="submit" class="btn gaurav-btn-login">Login</button>
+                    </form>
+                    <div class="text-center mt-4">
+                        <span>Don't have an account?</span>
+                        <a href="/sign_up/" class="btn gaurav-btn-profile ml-2">Sign up</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+<!-- Bootstrap JS (Include the Bootstrap JS file from a CDN or download and host it locally) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+{% endblock %}
